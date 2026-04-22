@@ -1,0 +1,447 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;600;700&display=swap');
+
+:root {
+  --bg: #0a0a0f;
+  --surface: #13131a;
+  --surface2: #1c1c28;
+  --border: #2a2a3d;
+  --x-color: #00e5ff;
+  --o-color: #ff4d6d;
+  --text: #f0f0ff;
+  --text-dim: #6b6b8a;
+  --glow-x: 0 0 20px #00e5ff55, 0 0 40px #00e5ff22;
+  --glow-o: 0 0 20px #ff4d6d55, 0 0 40px #ff4d6d22;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Rajdhani', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 229, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 229, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 20px;
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+}
+
+h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  letter-spacing: 8px;
+  color: var(--text);
+  line-height: 1;
+}
+
+h1 span {
+  color: var(--x-color);
+  text-shadow: var(--glow-x);
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* Scoreboard */
+.scoreboard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px 32px;
+  width: 100%;
+}
+
+.score-card {
+  flex: 1;
+  text-align: center;
+}
+
+.score-label {
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 4px;
+}
+
+.score-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  transition: transform 0.3s;
+}
+
+#score-x .score-value { color: var(--x-color); text-shadow: var(--glow-x); }
+#score-o .score-value { color: var(--o-color); text-shadow: var(--glow-o); }
+
+.score-divider {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+}
+
+/* Turn indicator */
+.turn-indicator {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  height: 24px;
+  transition: opacity 0.3s;
+}
+
+.turn-indicator strong {
+  color: var(--x-color);
+  font-weight: 700;
+}
+
+.turn-indicator.o-turn strong {
+  color: var(--o-color);
+}
+
+/* Board */
+.board-wrapper {
+  position: relative;
+}
+
+.boxes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+}
+
+.box {
+  width: 120px;
+  height: 120px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 13px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.box:hover:not(:disabled) {
+  background: #1f1f2e;
+  border-color: #3a3a55;
+  transform: scale(1.04);
+}
+
+.box:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.box.x {
+  color: var(--x-color);
+  border-color: #00e5ff44;
+  box-shadow: var(--glow-x);
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.box.o {
+  color: var(--o-color);
+  border-color: #ff4d6d44;
+  box-shadow: var(--glow-o);
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.box.win {
+  animation: winPulse 0.6s ease forwards;
+}
+
+.box.x.win {
+  background: #00e5ff15;
+  border-color: var(--x-color);
+  box-shadow: 0 0 30px #00e5ff66, 0 0 60px #00e5ff33;
+}
+
+.box.o.win {
+  background: #ff4d6d15;
+  border-color: var(--o-color);
+  box-shadow: 0 0 30px #ff4d6d66, 0 0 60px #ff4d6d33;
+}
+
+.box:disabled {
+  cursor: not-allowed;
+}
+
+/* Winner banner */
+.winner-banner {
+  display: none;
+  text-align: center;
+  padding: 14px 40px;
+  border-radius: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 4px;
+  animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.winner-banner.show {
+  display: block;
+}
+
+.winner-banner.x-wins {
+  background: #00e5ff15;
+  border: 1px solid #00e5ff44;
+  color: var(--x-color);
+  text-shadow: var(--glow-x);
+}
+
+.winner-banner.o-wins {
+  background: #ff4d6d15;
+  border: 1px solid #ff4d6d44;
+  color: var(--o-color);
+  text-shadow: var(--glow-o);
+}
+
+.winner-banner.draw {
+  background: #ffffff0a;
+  border: 1px solid #ffffff22;
+  color: var(--text);
+}
+
+/* Reset button */
+#reset-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#reset-btn:hover {
+  color: var(--text);
+  border-color: #3a3a55;
+  background: var(--surface2);
+}
+
+#reset-btn svg {
+  transition: transform 0.4s;
+}
+
+#reset-btn:hover svg {
+  transform: rotate(-180deg);
+}
+
+/* Animations */
+@keyframes popIn {
+  0% { transform: scale(0.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.12); }
+  60% { transform: scale(0.96); }
+  100% { transform: scale(1.05); }
+}
+
+@keyframes slideDown {
+  0% { opacity: 0; transform: translateY(-12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scoreUp {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.score-bump {
+  animation: scoreUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Credit */
+.credit {
+  font-size: 0.8rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-top: 8px;
+}
+
+.credit span {
+  color: var(--x-color);
+  text-shadow: 0 0 10px #00e5ff55;
+  font-weight: 700;
+}
+
+/* Responsive — Tablet */
+@media (max-width: 520px) {
+  main {
+    gap: 18px;
+    padding: 30px 16px;
+  }
+
+  h1 {
+    font-size: 3rem;
+    letter-spacing: 6px;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+  }
+
+  .scoreboard {
+    padding: 12px 20px;
+  }
+
+  .score-value {
+    font-size: 2rem;
+  }
+
+  .box {
+    width: 100px;
+    height: 100px;
+    font-size: 3rem;
+  }
+
+  .winner-banner {
+    font-size: 1.3rem;
+    padding: 12px 24px;
+    letter-spacing: 3px;
+  }
+}
+
+/* Responsive — Small phones (iPhone SE, Galaxy A etc.) */
+@media (max-width: 380px) {
+  h1 {
+    font-size: 2.4rem;
+    letter-spacing: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+
+  .scoreboard {
+    padding: 10px 14px;
+    gap: 10px;
+  }
+
+  .score-value {
+    font-size: 1.7rem;
+  }
+
+  .score-label {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+  }
+
+  .boxes {
+    gap: 7px;
+    padding: 7px;
+  }
+
+  .box {
+    width: 85px;
+    height: 85px;
+    font-size: 2.5rem;
+    border-radius: 10px;
+  }
+
+  .turn-indicator {
+    font-size: 0.85rem;
+  }
+
+  .winner-banner {
+    font-size: 1.1rem;
+    padding: 10px 18px;
+    letter-spacing: 2px;
+  }
+
+  #reset-btn {
+    font-size: 0.9rem;
+    padding: 10px 24px;
+  }
+
+  .credit {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+  }
+}
+
+/* Responsive — Very small (320px) */
+@media (max-width: 330px) {
+  .box {
+    width: 75px;
+    height: 75px;
+    font-size: 2.2rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+}
